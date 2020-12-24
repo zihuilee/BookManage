@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from PIL import Image, ImageDraw, ImageFont
+from django.urls import reverse
 from django.utils.six import BytesIO
 from Book.models import BookInfo
 import random
@@ -18,7 +19,7 @@ def post_test(request):
 
 # 输入验证码
 def inputyzm(request):
-    return render(request, 'Book/inputyzm.html')
+    return render(request, 'inputyzm.html')
 
 
 def recvyzm(request):
@@ -104,3 +105,27 @@ def booklist(request):
     context = {'booklist': bookinfos}
 
     return render(request, 'booklist.html', context)
+
+
+def login(request):
+    name = request.POST.get('name')
+    print(name)
+    response = redirect(reverse('Book:mine'))
+    response.set_cookie('name', name)
+    return response
+
+
+def mine(request):
+    name = request.COOKIES.get('name')
+    return render(request, 'mine.html', context=locals())
+
+
+def logout(request):
+    response = redirect(reverse('Book:mine'))
+    response.delete_cookie('name')
+    return response
+
+
+def index(request):
+
+    return render(request, 'login.html')
